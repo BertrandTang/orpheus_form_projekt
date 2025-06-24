@@ -21,7 +21,7 @@ function App() {
 
   const onSubmit = (data) => {
     console.log("Données du formulaire soumises (valides) :", data);
-    reset;
+    reset();
   };
 
   return (
@@ -59,18 +59,12 @@ function App() {
             <Form.Label>Priorité</Form.Label>
             <Form.Select
               aria-label="select_priority"
-              {...register("priority", {
-                required: "La priorité est requise.",
-              })}
-              isInvalid={!!errors.priority}
+              {...register("priority")}
             >
               <option value="1">Basse</option>
               <option value="2">Moyenne</option>
               <option value="3">Haute</option>
             </Form.Select>
-          <Form.Control.Feedback type="invalid">
-            {errors.priority?.message}
-          </Form.Control.Feedback>
           </Form.Group>
         </Row>
         <Row>
@@ -80,12 +74,8 @@ function App() {
               inline
               type="checkbox"
               id="isCompleted_checkbox"
-              {...register("isCompleted", {required: "Veuillez cocher la case."})}
-              isInvalid={!!errors.isCompleted}
+              {...register("isCompleted")}
             />
-          <Form.Control.Feedback type="invalid">
-            {errors.isCompleted?.message}
-          </Form.Control.Feedback>
           </Form.Group>
         </Row>
         <div>
