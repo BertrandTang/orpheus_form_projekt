@@ -38,7 +38,7 @@ function App() {
             />
             <Form.Control.Feedback type="invalid">
               {errors.name?.message}
-            </Form.Control.Feedback>
+            </Form.Control.Feedback>g
           </Form.Group>
         </Row>
         <Row>
@@ -49,9 +49,9 @@ function App() {
               {...register("date", { required: "La date est requise." })}
               isInvalid={!!errors.date}
             />
-          <Form.Control.Feedback type="invalid">
-            {errors.date?.message}
-          </Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">
+              {errors.date?.message}
+            </Form.Control.Feedback>
           </Form.Group>
         </Row>
         <Row>
