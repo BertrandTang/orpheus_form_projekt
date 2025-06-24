@@ -23,7 +23,9 @@ function App() {
     console.log("Données du formulaire soumises (valides) :", data);
     reset;
   };
-
+console.log("Full errors object:", errors);
+console.log("Error for isCompleted:", errors.isCompleted);
+console.log("Message for isCompleted:", errors.isCompleted?.message);
   return (
     <Container className="d-flex justify-content-center align-items-center vh-100">
       <Form onSubmit={handleSubmit(onSubmit)}>
@@ -80,7 +82,7 @@ function App() {
               inline
               type="checkbox"
               id="isCompleted_checkbox"
-              {...register("isCompleted", {required: "."})}
+              {...register("isCompleted", {required: "Veuillez cocher la case."})}
               isInvalid={!!errors.isCompleted}
             />
           <Form.Control.Feedback type="invalid">
