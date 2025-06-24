@@ -41,7 +41,7 @@ function App() {
           />
         </Form.Group>
         <Form.Group controlId="date_input">
-          <Form.Label>Date de naissance</Form.Label>
+          <Form.Label>Date</Form.Label>
           <Form.Control
             required
             type="date"
@@ -69,7 +69,6 @@ function App() {
           <Form.Label>isCompleted</Form.Label>
           <Form.Check
             inline
-            label="isCompleted"
             name="isCompleted"
             type="checkbox"
             id="checkbox"
