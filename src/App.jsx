@@ -7,44 +7,58 @@ import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
 
 const schema = yup.object().shape({
-  name: yup.string()
-    .min(8, 'Le nom doit faire au moins 8 caractères')
-    .max(15, 'Le nom doit faire au moins 15 caractères')
+  name: yup
+    .string()
+    .min(8, "Le nom doit faire au moins 8 caractères")
+    .max(15, "Le nom doit faire au moins 15 caractères")
     .required("Le nom est requis"),
-  date: yup.string()
-    .matches(/^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/, 'Le format de la date doit être JJ/MM/AAAA et être valide (JJ: 01-31, MM: 01-12)')
+  date: yup
+    .string()
+    .matches(
+      /^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/,
+      "Le format de la date doit être JJ/MM/AAAA et être valide (JJ: 01-31, MM: 01-12)"
+    )
     .required("La date est requis")
-    .test('is-valid-and-future-date', 'La date doit être valide et non antérieure à la date du jour', function (value) {
-      if (!value) return false;
+    .test(
+      "is-valid-and-future-date",
+      "La date doit être valide et non antérieure à la date du jour",
+      function (value) {
+        if (!value) return false;
 
-      const elements = value.split('/');
-      const day = Number(elements[0]);
-      const month = Number(elements[1]) - 1; // Mois de 0 à 11 car c'est un array
-      const year = Number(elements[2]);
+        const elements = value.split("/");
+        const day = Number(elements[0]);
+        const month = Number(elements[1]) - 1; // Mois de 0 à 11 car c'est un array
+        const year = Number(elements[2]);
 
-      const inputDate = new Date(year, month, day);
+        const inputDate = new Date(year, month, day);
 
-      const isValidDate = inputDate.getFullYear() === year &&
-        inputDate.getMonth() === month &&
-        inputDate.getDate() === day;
+        const isValidDate =
+          inputDate.getFullYear() === year &&
+          inputDate.getMonth() === month &&
+          inputDate.getDate() === day;
 
-      if (!isValidDate) {
-        return this.createError({ message: 'La date n\'est pas une date calendaire valide.' });
+        if (!isValidDate) {
+          return this.createError({
+            message: "La date n'est pas une date calendaire valide.",
+          });
+        }
+
+        const today = new Date();
+        // On met les deux dates à minuit pour ne comparer que le jour, le mois et l'année
+        today.setHours(0, 0, 0, 0);
+        inputDate.setHours(0, 0, 0, 0);
+
+        if (inputDate < today) {
+          return this.createError({
+            message: "La date ne peut pas être antérieure à la date du jour.",
+          });
+        }
+
+        return true; // La date est valide et non antérieure à aujourd'hui
       }
-
-      const today = new Date();
-      // On met les deux dates à minuit pour ne comparer que le jour, le mois et l'année
-      today.setHours(0, 0, 0, 0);
-      inputDate.setHours(0, 0, 0, 0);
-
-      if (inputDate < today) {
-        return this.createError({ message: 'La date ne peut pas être antérieure à la date du jour.' });
-      }
-
-      return true; // La date est valide et non antérieure à aujourd'hui
-    }),
+    ),
   priority: yup.string().oneOf(["Basse", "Moyenne", "Élevée"]),
-  isCompleted: yup.boolean()
+  isCompleted: yup.boolean(),
 });
 
 function App() {
@@ -63,7 +77,7 @@ function App() {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-100" >
+    <Container className="d-flex justify-content-center align-items-center vh-100">
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Row className="mb-3">
           <Form.Group controlId="name_input">
@@ -96,10 +110,7 @@ function App() {
         <Row>
           <Form.Group controlId="select_input">
             <Form.Label>Priorité</Form.Label>
-            <Form.Select
-              aria-label="select_priority"
-              {...register("priority")}
-            >
+            <Form.Select aria-label="select_priority" {...register("priority")}>
               <option value="Basse">Basse</option>
               <option value="Moyenne">Moyenne</option>
               <option value="Élevée">Élevée</option>
@@ -123,7 +134,7 @@ function App() {
           </Button>
         </div>
       </Form>
-    </Container >
+    </Container>
   );
 }
 
