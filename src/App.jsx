@@ -1,8 +1,41 @@
 import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Container from "react-bootstrap/Container";
+
+const schema = yup.object().shape({
+  name: yup.string()
+    .min(8, 'Le nom doit faire au moins 8 caractères')
+    .max(15, 'Le nom doit faire au moins 15 caractères')
+    .required("Le nom est requis"),
+  date: yup.string()
+    .matches(/^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/, 'Le format de la date doit être JJ/MM/AAAA et être valide (JJ: 01-31, MM: 01-12)')
+    .required("La date est requis")
+    .test('is-valid-and-future-date', 'La date doit être valide et non antérieure à la date du jour', function (value) {
+      if (!value) return false;
+
+      const elements = value.split('/');
+      const day = Number(elements[0]);
+      const month = Number(elements[1]) - 1; // Mois de 0 à 11 car c'est un array
+      const year = Number(elements[2]);
+
+      const inputDate = new Date(year, month, day);
+
+      const isValidDate = inputDate.getFullYear() === year &&
+        inputDate.getMonth() === month &&
+        inputDate.getDate() === day;
+
+      if (!isValidDate) {
+        return this.createError({ message: 'La date n\'est pas une date calendaire valide.' });
+      }
+       return true; // La date est valide et non antérieure à aujourd'hui
+    }),
+    priority: yup.string().oneOf(["Basse", "Moyenne", "Élevée"]),
+    isCompleted: yup.boolean()
+});
 
 function App() {
   const {
@@ -11,12 +44,7 @@ function App() {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      name: "",
-      date: "",
-      priority: "1",
-      isCompleted: false,
-    },
+    resolver: yupResolver(schema),
   });
 
   const onSubmit = (data) => {
@@ -25,7 +53,7 @@ function App() {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center vh-100">
+    <Container className="d-flex justify-content-center align-items-center vh-100" >
       <Form onSubmit={handleSubmit(onSubmit)}>
         <Row className="mb-3">
           <Form.Group controlId="name_input">
@@ -33,20 +61,21 @@ function App() {
             <Form.Control
               type="text"
               placeholder="Nom"
-              {...register("name", { required: "Le nom est requis." })}
+              {...register("name")}
               isInvalid={!!errors.name} // convertit en booléen strict donc si errors.name existe alors ce serait true
             />
             <Form.Control.Feedback type="invalid">
               {errors.name?.message}
-            </Form.Control.Feedback>g
+            </Form.Control.Feedback>
           </Form.Group>
         </Row>
         <Row>
           <Form.Group controlId="date_input">
             <Form.Label>Date</Form.Label>
             <Form.Control
-              type="date"
-              {...register("date", { required: "La date est requise." })}
+              type="text"
+              placeholder="25/06/2025"
+              {...register("date")}
               isInvalid={!!errors.date}
             />
             <Form.Control.Feedback type="invalid">
@@ -61,9 +90,9 @@ function App() {
               aria-label="select_priority"
               {...register("priority")}
             >
-              <option value="1">Basse</option>
-              <option value="2">Moyenne</option>
-              <option value="3">Haute</option>
+              <option value="Basse">Basse</option>
+              <option value="Moyenne">Moyenne</option>
+              <option value="Élevée">Élevée</option>
             </Form.Select>
           </Form.Group>
         </Row>
@@ -84,7 +113,7 @@ function App() {
           </Button>
         </div>
       </Form>
-    </Container>
+    </Container >
   );
 }
 
