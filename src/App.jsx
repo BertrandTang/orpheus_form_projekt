@@ -31,10 +31,20 @@ const schema = yup.object().shape({
       if (!isValidDate) {
         return this.createError({ message: 'La date n\'est pas une date calendaire valide.' });
       }
-       return true; // La date est valide et non antérieure à aujourd'hui
+
+      const today = new Date();
+      // On met les deux dates à minuit pour ne comparer que le jour, le mois et l'année
+      today.setHours(0, 0, 0, 0);
+      inputDate.setHours(0, 0, 0, 0);
+
+      if (inputDate < today) {
+        return this.createError({ message: 'La date ne peut pas être antérieure à la date du jour.' });
+      }
+
+      return true; // La date est valide et non antérieure à aujourd'hui
     }),
-    priority: yup.string().oneOf(["Basse", "Moyenne", "Élevée"]),
-    isCompleted: yup.boolean()
+  priority: yup.string().oneOf(["Basse", "Moyenne", "Élevée"]),
+  isCompleted: yup.boolean()
 });
 
 function App() {
