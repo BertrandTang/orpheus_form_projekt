@@ -52,6 +52,12 @@ function App() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      name: "",
+      date: "",
+      priority: "Basse",
+      isCompleted: false,
+    }
   });
 
   const onSubmit = (data) => {
