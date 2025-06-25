@@ -27,36 +27,19 @@ const schema = yup.object().shape({
 
         const elements = value.split("/");
         const day = Number(elements[0]);
-        const month = Number(elements[1]) - 1; // Mois de 0 à 11 car c'est un array
+        const month = Number(elements[1]) - 1; // Mois de 0 à 11 pour JavaScript
         const year = Number(elements[2]);
 
         const inputDate = new Date(year, month, day);
 
-        const isValidDate =
-          inputDate.getFullYear() === year &&
-          inputDate.getMonth() === month &&
-          inputDate.getDate() === day;
-
-        if (!isValidDate) {
-          return this.createError({
-            message: "La date n'est pas une date calendaire valide.",
-          });
-        }
-
         const today = new Date();
-        // On met les deux dates à minuit pour ne comparer que le jour, le mois et l'année
         today.setHours(0, 0, 0, 0);
         inputDate.setHours(0, 0, 0, 0);
 
-        if (inputDate < today) {
-          return this.createError({
-            message: "La date ne peut pas être antérieure à la date du jour.",
-          });
-        }
-
-        return true; // La date est valide et non antérieure à aujourd'hui
+        return inputDate >= today;
       }
     ),
+
   priority: yup.string().oneOf(["Basse", "Moyenne", "Élevée"]),
   isCompleted: yup.boolean(),
 });
